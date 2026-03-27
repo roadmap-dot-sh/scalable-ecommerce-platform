@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: service-registry
+
+  security:
+    user:
+      name: eureka
+      password: password
+
+eureka:
+  server:
+    enable-self-preservation: false
+    eviction-interval-timer-in-ms: 60000
+    response-cache-auto-expiration-in-seconds: 180
+  client:
+    fetch-registry: false
+    register-with-eureka: false
+  instance:
+    hostname: localhost
+    lease-expiration-duration-in-seconds: 90
+    lease-renewal-interval-in-seconds: 30
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+
+server:
+  port: 8761
+
+
