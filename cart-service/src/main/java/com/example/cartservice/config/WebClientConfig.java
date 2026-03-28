@@ -1,16 +1,14 @@
-/*
- * WebClientConfig.java
- *
- * Copyright (c) 2025 Nguyen. All rights reserved.
- * This software is the confidential and proprietary information of Nguyen.
- */
-
 package com.example.cartservice.config;
 
-/**
- * WebClientConfig.java
- *
- * @author Nguyen
- */
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.reactive.function.client.WebClient;
+
+@Configuration
 public class WebClientConfig {
+
+    @Bean
+    public WebClient webClient() {
+        return WebClient.builder().build();
+    }
 }

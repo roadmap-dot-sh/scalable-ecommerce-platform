@@ -1,16 +1,23 @@
-/*
- * PaymentRequest.java
- *
- * Copyright (c) 2025 Nguyen. All rights reserved.
- * This software is the confidential and proprietary information of Nguyen.
- */
-
 package com.example.paymentservice.dto.request;
 
-/**
- * PaymentRequest.java
- *
- * @author Nguyen
- */
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.Data;
+
+import java.math.BigDecimal;
+
+@Data
 public class PaymentRequest {
+
+    @NotBlank
+    private String orderId;
+
+    @NotNull
+    @DecimalMin(value = "0.01")
+    private BigDecimal amount;
+
+    private String currency;
+
+    private String provider;
 }

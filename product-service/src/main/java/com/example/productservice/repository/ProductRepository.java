@@ -30,7 +30,7 @@ public interface ProductRepository extends MongoRepository<Product, String> {
 
     Page<Product> findByActiveTrue(Pageable pageable);
 
-    Page<Product> findByCategoryIdAndActiveTrue(String categoryId, Pageable pageable);
+    Page<Product> findByCategory_IdAndActiveTrue(String categoryId, Pageable pageable);
 
     Page<Product> findByBrandAndActiveTrue(String brand, Pageable pageable);
 

@@ -1,16 +1,11 @@
-/*
- * WebhookPayload.java
- *
- * Copyright (c) 2025 Nguyen. All rights reserved.
- * This software is the confidential and proprietary information of Nguyen.
- */
-
 package com.example.paymentservice.dto.request;
 
-/**
- * WebhookPayload.java
- *
- * @author Nguyen
- */
+import lombok.Data;
+
+import java.util.Map;
+
+@Data
 public class WebhookPayload {
+    private String provider;
+    private Map<String, Object> raw;
 }

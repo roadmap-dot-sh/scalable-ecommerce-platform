@@ -1,16 +1,13 @@
-/*
- * VnPayWebhookHandler.java
- *
- * Copyright (c) 2025 Nguyen. All rights reserved.
- * This software is the confidential and proprietary information of Nguyen.
- */
-
 package com.example.paymentservice.webhook;
 
-/**
- * VnPayWebhookHandler.java
- *
- * @author Nguyen
- */
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
+
+@Component
+@Slf4j
 public class VnPayWebhookHandler {
+
+    public void onEvent(Object payload) {
+        log.debug("VNPAY webhook: {}", payload);
+    }
 }

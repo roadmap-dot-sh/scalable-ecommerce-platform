@@ -1,16 +1,23 @@
-/*
- * PaypalGateway.java
- *
- * Copyright (c) 2025 Nguyen. All rights reserved.
- * This software is the confidential and proprietary information of Nguyen.
- */
-
 package com.example.paymentservice.gateway;
 
-/**
- * PaypalGateway.java
- *
- * @author Nguyen
- */
-public class PaypalGateway {
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
+
+import java.math.BigDecimal;
+import java.util.UUID;
+
+@Component
+@Slf4j
+public class PaypalGateway implements PaymentGateway {
+
+    @Override
+    public String getName() {
+        return "PAYPAL";
+    }
+
+    @Override
+    public GatewayChargeResult charge(BigDecimal amount, String currency, String orderId) {
+        log.info("PayPal mock charge orderId={} amount={} {}", orderId, amount, currency);
+        return new GatewayChargeResult(true, "pp_mock_" + UUID.randomUUID(), "ok");
+    }
 }

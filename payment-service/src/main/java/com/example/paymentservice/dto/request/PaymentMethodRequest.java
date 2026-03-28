@@ -1,16 +1,16 @@
-/*
- * PaymentMethodRequest.java
- *
- * Copyright (c) 2025 Nguyen. All rights reserved.
- * This software is the confidential and proprietary information of Nguyen.
- */
-
 package com.example.paymentservice.dto.request;
 
-/**
- * PaymentMethodRequest.java
- *
- * @author Nguyen
- */
+import jakarta.validation.constraints.NotBlank;
+import lombok.Data;
+
+@Data
 public class PaymentMethodRequest {
+
+    @NotBlank
+    private String userId;
+
+    private String brand;
+    private String last4;
+    private String provider;
+    private boolean defaultMethod;
 }

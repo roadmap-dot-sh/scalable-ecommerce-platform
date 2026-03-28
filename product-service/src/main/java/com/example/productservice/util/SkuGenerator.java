@@ -1,16 +1,14 @@
-/*
- * SkuGenerator.java
- *
- * Copyright (c) 2025 Nguyen. All rights reserved.
- * This software is the confidential and proprietary information of Nguyen.
- */
-
 package com.example.productservice.util;
 
-/**
- * SkuGenerator.java
- *
- * @author Nguyen
- */
-public class SkuGenerator {
+import java.util.UUID;
+
+public final class SkuGenerator {
+
+    private SkuGenerator() {
+    }
+
+    public static String randomSku(String prefix) {
+        String p = prefix != null && !prefix.isBlank() ? prefix + "-" : "SKU-";
+        return p + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+    }
 }

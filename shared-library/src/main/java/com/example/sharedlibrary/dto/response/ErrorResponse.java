@@ -7,10 +7,24 @@
 
 package com.example.sharedlibrary.dto.response;
 
+import lombok.*;
+import lombok.experimental.FieldDefaults;
+
+import java.util.Map;
+
 /**
  * ErrorResponse.java
  *
  * @author Nguyen
  */
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class ErrorResponse {
+    String code;
+    String message;
+    String detail;
+    Map<String, String> validationErrors;
 }

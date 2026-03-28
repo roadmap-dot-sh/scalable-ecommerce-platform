@@ -7,6 +7,8 @@
 
 package com.example.productservice.entity;
 
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -75,6 +77,9 @@ public class Product {
     private String upc; // Universal Product Code
 
     private String mpn; // Manufacturer Part Number
+
+    @Builder.Default
+    private Integer quantity = 0;
 
     private boolean active = true;
 

@@ -1,16 +1,8 @@
-/*
- * TemplateNotFoundException.java
- *
- * Copyright (c) 2025 Nguyen. All rights reserved.
- * This software is the confidential and proprietary information of Nguyen.
- */
-
 package com.example.notificationservice.exception;
 
-/**
- * TemplateNotFoundException.java
- *
- * @author Nguyen
- */
-public class TemplateNotFoundException {
+public class TemplateNotFoundException extends RuntimeException {
+
+    public TemplateNotFoundException(String message) {
+        super(message);
+    }
 }

@@ -1,16 +1,8 @@
-/*
- * CartItemNotFoundException.java
- *
- * Copyright (c) 2025 Nguyen. All rights reserved.
- * This software is the confidential and proprietary information of Nguyen.
- */
-
 package com.example.cartservice.exception;
 
-/**
- * CartItemNotFoundException.java
- *
- * @author Nguyen
- */
-public class CartItemNotFoundException {
+public class CartItemNotFoundException extends RuntimeException {
+
+    public CartItemNotFoundException(String message) {
+        super(message);
+    }
 }

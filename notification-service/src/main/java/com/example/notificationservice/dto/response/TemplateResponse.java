@@ -1,16 +1,21 @@
-/*
- * TemplateResponse.java
- *
- * Copyright (c) 2025 Nguyen. All rights reserved.
- * This software is the confidential and proprietary information of Nguyen.
- */
-
 package com.example.notificationservice.dto.response;
 
-/**
- * TemplateResponse.java
- *
- * @author Nguyen
- */
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class TemplateResponse {
+    private String id;
+    private String code;
+    private String name;
+    private String subjectTemplate;
+    private String bodyTemplate;
+    private LocalDateTime createdAt;
 }

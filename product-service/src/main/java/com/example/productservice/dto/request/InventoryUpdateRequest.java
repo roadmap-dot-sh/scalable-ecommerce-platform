@@ -1,16 +1,16 @@
-/*
- * InventoryUpdateRequest.java
- *
- * Copyright (c) 2025 Nguyen. All rights reserved.
- * This software is the confidential and proprietary information of Nguyen.
- */
-
 package com.example.productservice.dto.request;
 
-/**
- * InventoryUpdateRequest.java
- *
- * @author Nguyen
- */
+import jakarta.validation.constraints.Min;
+import lombok.Data;
+
+@Data
 public class InventoryUpdateRequest {
+
+    @Min(0)
+    private Integer quantity;
+
+    private String variantId;
+
+    @Min(0)
+    private Integer variantQuantity;
 }

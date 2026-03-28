@@ -1,16 +1,16 @@
-/*
- * ProductValidator.java
- *
- * Copyright (c) 2025 Nguyen. All rights reserved.
- * This software is the confidential and proprietary information of Nguyen.
- */
-
 package com.example.productservice.util;
 
-/**
- * ProductValidator.java
- *
- * @author Nguyen
- */
+import com.example.productservice.dto.request.CreateProductRequest;
+import org.springframework.stereotype.Component;
+
+import java.math.BigDecimal;
+
+@Component
 public class ProductValidator {
+
+    public void validateCreate(CreateProductRequest request) {
+        if (request.getPrice() == null || request.getPrice().compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("Price must be zero or positive");
+        }
+    }
 }

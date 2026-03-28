@@ -7,6 +7,7 @@
 
 package com.example.userservice.dto.request;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 /**
@@ -18,5 +19,4 @@ import lombok.Data;
 public class ChangePasswordRequest {
     private String currentPassword;
     private String newPassword;
-
 }

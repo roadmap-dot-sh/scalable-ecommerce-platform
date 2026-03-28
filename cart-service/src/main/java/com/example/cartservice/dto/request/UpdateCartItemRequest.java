@@ -1,16 +1,13 @@
-/*
- * UpdateCartItemRequest.java
- *
- * Copyright (c) 2025 Nguyen. All rights reserved.
- * This software is the confidential and proprietary information of Nguyen.
- */
-
 package com.example.cartservice.dto.request;
 
-/**
- * UpdateCartItemRequest.java
- *
- * @author Nguyen
- */
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import lombok.Data;
+
+@Data
 public class UpdateCartItemRequest {
+
+    @NotNull
+    @Min(1)
+    private Integer quantity;
 }

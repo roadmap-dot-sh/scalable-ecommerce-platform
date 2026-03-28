@@ -12,5 +12,12 @@ package com.example.userservice.exception;
  *
  * @author Nguyen
  */
-public class ResourceNotFoundException {
+public class ResourceNotFoundException extends RuntimeException {
+    public ResourceNotFoundException(String message) {
+        super(message);
+    }
+
+    public ResourceNotFoundException(String user, String email, String emailOrUsername) {
+        
+    }
 }

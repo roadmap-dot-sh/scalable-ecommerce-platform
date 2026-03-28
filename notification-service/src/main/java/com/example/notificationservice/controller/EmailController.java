@@ -1,16 +1,22 @@
-/*
- * EmailController.java
- *
- * Copyright (c) 2025 Nguyen. All rights reserved.
- * This software is the confidential and proprietary information of Nguyen.
- */
-
 package com.example.notificationservice.controller;
 
-/**
- * EmailController.java
- *
- * @author Nguyen
- */
+import com.example.notificationservice.dto.request.EmailRequest;
+import com.example.notificationservice.service.EmailService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/notifications/email")
+@RequiredArgsConstructor
 public class EmailController {
+
+    private final EmailService emailService;
+
+    @PostMapping("/send")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public void send(@Valid @RequestBody EmailRequest request) {
+        emailService.send(request);
+    }
 }

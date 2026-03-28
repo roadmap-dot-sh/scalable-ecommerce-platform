@@ -1,16 +1,13 @@
-/*
- * RefundRepository.java
- *
- * Copyright (c) 2025 Nguyen. All rights reserved.
- * This software is the confidential and proprietary information of Nguyen.
- */
-
 package com.example.paymentservice.repository;
 
-/**
- * RefundRepository.java
- *
- * @author Nguyen
- */
-public interface RefundRepository {
+import com.example.paymentservice.entity.Refund;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public interface RefundRepository extends JpaRepository<Refund, String> {
+
+    List<Refund> findByPaymentId(String paymentId);
 }

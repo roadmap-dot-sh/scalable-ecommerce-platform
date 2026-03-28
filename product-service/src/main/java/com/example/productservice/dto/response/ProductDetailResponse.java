@@ -1,16 +1,37 @@
-/*
- * ProductDetailResponse.java
- *
- * Copyright (c) 2025 Nguyen. All rights reserved.
- * This software is the confidential and proprietary information of Nguyen.
- */
-
 package com.example.productservice.dto.response;
 
-/**
- * ProductDetailResponse.java
- *
- * @author Nguyen
- */
+import com.example.productservice.entity.ProductVariant;
+import com.example.productservice.entity.Review;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Set;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ProductDetailResponse {
+    private String id;
+    private String sku;
+    private String name;
+    private String description;
+    private String shortDescription;
+    private BigDecimal price;
+    private BigDecimal compareAtPrice;
+    private List<String> images;
+    private String thumbnail;
+    private CategoryResponse category;
+    private Set<String> tags;
+    private String brand;
+    private List<Review> reviews;
+    private List<ProductVariant> variants;
+    private Integer quantity;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

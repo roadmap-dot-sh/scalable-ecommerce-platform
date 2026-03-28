@@ -1,16 +1,26 @@
-/*
- * ReviewResponse.java
- *
- * Copyright (c) 2025 Nguyen. All rights reserved.
- * This software is the confidential and proprietary information of Nguyen.
- */
-
 package com.example.productservice.dto.response;
 
-/**
- * ReviewResponse.java
- *
- * @author Nguyen
- */
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ReviewResponse {
+    private String id;
+    private String userId;
+    private String userName;
+    private int rating;
+    private String title;
+    private String comment;
+    private List<String> images;
+    private boolean verifiedPurchase;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

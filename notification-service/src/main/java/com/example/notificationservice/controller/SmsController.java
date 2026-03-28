@@ -1,16 +1,22 @@
-/*
- * SmsController.java
- *
- * Copyright (c) 2025 Nguyen. All rights reserved.
- * This software is the confidential and proprietary information of Nguyen.
- */
-
 package com.example.notificationservice.controller;
 
-/**
- * SmsController.java
- *
- * @author Nguyen
- */
+import com.example.notificationservice.dto.request.SmsRequest;
+import com.example.notificationservice.service.SmsService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/notifications/sms")
+@RequiredArgsConstructor
 public class SmsController {
+
+    private final SmsService smsService;
+
+    @PostMapping("/send")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public void send(@Valid @RequestBody SmsRequest request) {
+        smsService.send(request);
+    }
 }

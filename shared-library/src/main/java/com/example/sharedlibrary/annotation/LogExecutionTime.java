@@ -7,10 +7,17 @@
 
 package com.example.sharedlibrary.annotation;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 /**
  * LogExecutionTime.java
  *
  * @author Nguyen
  */
-public class LogExecutionTime {
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface LogExecutionTime {
 }

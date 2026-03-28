@@ -1,16 +1,19 @@
-/*
- * SwaggerConfig.java
- *
- * Copyright (c) 2025 Nguyen. All rights reserved.
- * This software is the confidential and proprietary information of Nguyen.
- */
-
 package com.example.productservice.config;
 
-/**
- * SwaggerConfig.java
- *
- * @author Nguyen
- */
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
 public class SwaggerConfig {
+
+    @Bean
+    public OpenAPI productOpenApi() {
+        return new OpenAPI()
+                .info(new Info()
+                        .title("Product Catalog API")
+                        .description("Product, category, inventory, search")
+                        .version("v1"));
+    }
 }

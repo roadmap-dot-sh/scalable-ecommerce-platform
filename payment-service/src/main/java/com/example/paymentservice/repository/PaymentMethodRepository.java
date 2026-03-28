@@ -1,16 +1,13 @@
-/*
- * PaymentMethodRepository.java
- *
- * Copyright (c) 2025 Nguyen. All rights reserved.
- * This software is the confidential and proprietary information of Nguyen.
- */
-
 package com.example.paymentservice.repository;
 
-/**
- * PaymentMethodRepository.java
- *
- * @author Nguyen
- */
-public interface PaymentMethodRepository {
+import com.example.paymentservice.entity.PaymentMethod;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public interface PaymentMethodRepository extends JpaRepository<PaymentMethod, String> {
+
+    List<PaymentMethod> findByUserId(String userId);
 }

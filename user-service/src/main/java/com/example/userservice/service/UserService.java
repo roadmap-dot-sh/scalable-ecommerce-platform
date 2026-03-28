@@ -7,6 +7,7 @@
 
 package com.example.userservice.service;
 
+import com.example.sharedlibrary.enums.UserEventType;
 import com.example.userservice.dto.request.*;
 import com.example.userservice.dto.response.AuthResponse;
 import com.example.userservice.dto.response.TokenValidationResponse;
@@ -14,11 +15,10 @@ import com.example.userservice.dto.response.UserResponse;
 import com.example.userservice.entity.EmailVerificationToken;
 import com.example.userservice.entity.PasswordResetToken;
 import com.example.userservice.entity.User;
-import com.example.userservice.event.UserEventPublisher;
-import com.example.userservice.exception.InvalidCredentialsException;
-import com.example.userservice.exception.UserAlreadyExistsException;
-import com.example.userservice.exception.UserNotFoundException;
+import com.example.userservice.event.UserEvent;
+import com.example.userservice.exception.*;
 import com.example.userservice.mapper.UserMapper;
+import com.example.userservice.repository.EmailVerificationTokenRepository;
 import com.example.userservice.repository.PasswordResetTokenRepository;
 import com.example.userservice.repository.UserRepository;
 import com.example.userservice.security.JwtService;
@@ -50,11 +50,13 @@ import java.util.UUID;
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordResetTokenRepository passwordResetTokenRepository;
+    private final EmailVerificationTokenRepository emailVerificationTokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
-    private final UserEventPublisher eventPublisher;
+    private final UserEvent eventPublisher;
     private final UserMapper userMapper;
+
 
     @Transactional
     public UserResponse register(RegisterRequest request) {
@@ -62,11 +64,11 @@ public class UserService {
 
         // Check if user exists
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new UserAlreadyExistsException("Email already registered");
+            throw new DuplicateResourceException("Email already registered");
         }
 
         if (userRepository.existsByUsername(request.getUsername())) {
-            throw new UserAlreadyExistsException("Username already taken");
+            throw new DuplicateResourceException("Username already taken");
         }
 
         // Create new user
@@ -88,7 +90,7 @@ public class UserService {
 
         // Save token to database (implement repository)
         // publish user created event
-        eventPublisher.publishUserCreatedEvent(user);
+        eventPublisher.sendUserEvent(user, UserEventType.REGISTERED);
 
         log.info("User registered successfully with id: {}", user.getId());
 
@@ -111,7 +113,7 @@ public class UserService {
             User user = userRepository.findByEmailOrUsername(
                     request.getEmailOrUsername(),
                     request.getEmailOrUsername()
-            ).orElseThrow(() -> new UserNotFoundException("User not found"));
+            ).orElseThrow(() -> new ResourceNotFoundException("User", "email", request.getEmailOrUsername()));
 
             // Reset failed login attempts
             user.setFailedLoginAttempts(0);
@@ -120,6 +122,8 @@ public class UserService {
 
             String token = jwtService.generateToken(user);
             String refreshToken = jwtService.generateRefreshToken(user);
+
+            eventPublisher.sendUserEvent(user, UserEventType.LOGIN);
 
             return AuthResponse.builder()
                     .token(token)
@@ -181,7 +185,7 @@ public class UserService {
         user = userRepository.save(user);
 
         // publish user updated event
-        eventPublisher.publishUserUpdatedEvent(user);
+        eventPublisher.sendUserEvent(user, UserEventType.UPDATED);
 
         return userMapper.mapToResponse(user);
     }
@@ -200,7 +204,7 @@ public class UserService {
         userRepository.save(user);
 
         // publish password change event
-        eventPublisher.publishPasswordChangedEvent(user);
+        eventPublisher.sendUserEvent(user, UserEventType.PASSWORD_CHANGED);
     }
 
     @Transactional
@@ -208,22 +212,27 @@ public class UserService {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new UserNotFoundException("User not found with email: " + request.getEmail()));
 
-        String token = UUID.randomUUID().toString();
+        // Delete existing tokens
+        passwordResetTokenRepository.deleteByUser_Id(user.getId());
 
+        String token = UUID.randomUUID().toString();
         PasswordResetToken resetToken = new PasswordResetToken(token, user);
         passwordResetTokenRepository.save(resetToken);
 
+        // Send email with reset token (would be sent via notification service)
+        log.info("Password reset token for user {}: {}", request.getEmail(), token);
+
         // send password reset email
-        eventPublisher.publishPasswordResetEvent(user, token);
+        eventPublisher.sendUserEvent(user, UserEventType.PASSWORD_FORGOT);
     }
 
     @Transactional
     public void resetPassword(String token, ResetPasswordRequest request) {
         PasswordResetToken resetToken = passwordResetTokenRepository.findByToken(token)
-                .orElseThrow(() -> new RuntimeException("Invalid token"));
+                .orElseThrow(() -> new InvalidCredentialsException("Invalid token"));
 
         if (resetToken.isExpired()) {
-            throw new RuntimeException("Token has expired");
+            throw new InvalidCredentialsException("Token has expired");
         }
 
         User user = resetToken.getUser();
@@ -234,7 +243,7 @@ public class UserService {
         passwordResetTokenRepository.delete(resetToken);
 
         // publish password reset event
-        eventPublisher.publishPasswordResetConfirmedToken(user);
+        eventPublisher.sendUserEvent(user, UserEventType.PASSWORD_RESET);
     }
 
     public boolean validateToken(String token) {
@@ -274,6 +283,16 @@ public class UserService {
         userRepository.save(user);
 
         // publish user deleted event
-        eventPublisher.publishUserDeletedEvent(user);
+        eventPublisher.sendUserEvent(user, UserEventType.DELETED);
+    }
+
+    @Transactional
+    public void verifyEmail(String token) {
+        EmailVerificationToken verificationToken = emailVerificationTokenRepository.findByToken(token)
+                .orElseThrow(() -> new InvalidTokenException("Invalid verification token"));
+
+        if (verificationToken.getExpiryDate().isBefore(LocalDateTime.now())) {
+
+        }
     }
 }

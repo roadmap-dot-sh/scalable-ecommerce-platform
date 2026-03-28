@@ -1,16 +1,9 @@
-/*
- * MongoConfig.java
- *
- * Copyright (c) 2025 Nguyen. All rights reserved.
- * This software is the confidential and proprietary information of Nguyen.
- */
-
 package com.example.productservice.config;
 
-/**
- * MongoConfig.java
- *
- * @author Nguyen
- */
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.mongodb.config.EnableMongoAuditing;
+
+@Configuration
+@EnableMongoAuditing
 public class MongoConfig {
 }

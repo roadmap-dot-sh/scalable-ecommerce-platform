@@ -1,16 +1,14 @@
-/*
- * PaypalConfig.java
- *
- * Copyright (c) 2025 Nguyen. All rights reserved.
- * This software is the confidential and proprietary information of Nguyen.
- */
-
 package com.example.paymentservice.config;
 
-/**
- * PaypalConfig.java
- *
- * @author Nguyen
- */
+import lombok.Data;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+@ConfigurationProperties(prefix = "payment.paypal")
+@Data
 public class PaypalConfig {
+    private String clientId = "";
+    private String clientSecret = "";
+    private String mode = "sandbox";
 }

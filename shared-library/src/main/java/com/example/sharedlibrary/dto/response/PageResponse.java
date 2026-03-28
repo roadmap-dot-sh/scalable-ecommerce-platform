@@ -7,10 +7,27 @@
 
 package com.example.sharedlibrary.dto.response;
 
+import lombok.*;
+import lombok.experimental.FieldDefaults;
+
+import java.util.List;
+
 /**
  * PageResponse.java
  *
  * @author Nguyen
  */
-public class PageResponse {
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
+public class PageResponse<T> {
+    List<T> content;
+    int pageNumber;
+    int pageSize;
+    long totalElements;
+    int totalPages;
+    boolean first;
+    boolean last;
 }

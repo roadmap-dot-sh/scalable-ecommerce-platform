@@ -12,5 +12,14 @@ package com.example.sharedlibrary.constant;
  *
  * @author Nguyen
  */
-public class KafkaTopics {
+public final class KafkaTopics {
+    public static final String ORDERS_TOPIC = "order-events";
+    public static final String PAYMENT_TOPIC = "payment-events";
+    public static final String USER_TOPIC = "user-events";
+    public static final String PRODUCT_TOPIC = "product-events";
+    public static final String NOTIFICATION_TOPIC = "notification-events";
+    public static final String INVENTORY_TOPIC = "inventory-events";
+
+    private KafkaTopics() {
+    }
 }

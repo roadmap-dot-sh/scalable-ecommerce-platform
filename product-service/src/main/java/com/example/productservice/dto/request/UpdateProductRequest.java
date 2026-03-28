@@ -1,16 +1,23 @@
-/*
- * UpdateProductRequest.java
- *
- * Copyright (c) 2025 Nguyen. All rights reserved.
- * This software is the confidential and proprietary information of Nguyen.
- */
-
 package com.example.productservice.dto.request;
 
-/**
- * UpdateProductRequest.java
- *
- * @author Nguyen
- */
+import lombok.Data;
+
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Set;
+
+@Data
 public class UpdateProductRequest {
+    private String name;
+    private String description;
+    private String shortDescription;
+    private BigDecimal price;
+    private BigDecimal compareAtPrice;
+    private List<String> images;
+    private String thumbnail;
+    private String categoryId;
+    private Set<String> tags;
+    private String brand;
+    private Boolean featured;
+    private Boolean active;
 }

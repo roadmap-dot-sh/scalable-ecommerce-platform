@@ -1,16 +1,24 @@
-/*
- * CreateOrderRequest.java
- *
- * Copyright (c) 2025 Nguyen. All rights reserved.
- * This software is the confidential and proprietary information of Nguyen.
- */
-
 package com.example.orderservice.dto.request;
 
-/**
- * CreateOrderRequest.java
- *
- * @author Nguyen
- */
+import jakarta.validation.constraints.NotBlank;
+import lombok.Data;
+
+@Data
 public class CreateOrderRequest {
+
+    @NotBlank
+    private String shippingName;
+
+    @NotBlank
+    private String shippingLine1;
+
+    @NotBlank
+    private String shippingCity;
+
+    @NotBlank
+    private String shippingPostalCode;
+
+    private String shippingCountry;
+
+    private String paymentProvider;
 }

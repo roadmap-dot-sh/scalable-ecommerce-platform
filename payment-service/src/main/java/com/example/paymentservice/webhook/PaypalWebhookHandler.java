@@ -1,16 +1,13 @@
-/*
- * PaypalWebhookHandler.java
- *
- * Copyright (c) 2025 Nguyen. All rights reserved.
- * This software is the confidential and proprietary information of Nguyen.
- */
-
 package com.example.paymentservice.webhook;
 
-/**
- * PaypalWebhookHandler.java
- *
- * @author Nguyen
- */
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
+
+@Component
+@Slf4j
 public class PaypalWebhookHandler {
+
+    public void onEvent(String payload) {
+        log.debug("PayPal webhook event received (length={})", payload != null ? payload.length() : 0);
+    }
 }

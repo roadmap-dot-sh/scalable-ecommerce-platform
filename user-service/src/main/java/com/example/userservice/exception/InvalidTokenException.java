@@ -12,5 +12,8 @@ package com.example.userservice.exception;
  *
  * @author Nguyen
  */
-public class InvalidTokenException {
+public class InvalidTokenException extends RuntimeException {
+    public InvalidTokenException(String message) {
+        super(message);
+    }
 }

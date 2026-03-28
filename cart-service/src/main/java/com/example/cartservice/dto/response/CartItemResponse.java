@@ -1,16 +1,23 @@
-/*
- * CartItemResponse.java
- *
- * Copyright (c) 2025 Nguyen. All rights reserved.
- * This software is the confidential and proprietary information of Nguyen.
- */
-
 package com.example.cartservice.dto.response;
 
-/**
- * CartItemResponse.java
- *
- * @author Nguyen
- */
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.math.BigDecimal;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class CartItemResponse {
+    private String id;
+    private String productId;
+    private String sku;
+    private String productName;
+    private BigDecimal unitPrice;
+    private int quantity;
+    private BigDecimal lineTotal;
+    private String thumbnail;
 }

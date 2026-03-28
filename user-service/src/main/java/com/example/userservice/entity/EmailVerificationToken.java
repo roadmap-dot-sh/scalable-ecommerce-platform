@@ -23,7 +23,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 public class EmailVerificationToken {
-    private static final int EXPIRATION = 48;
+    private static final int EXPIRATION = 24;
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

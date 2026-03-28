@@ -1,16 +1,8 @@
-/*
- * PaymentFailedException.java
- *
- * Copyright (c) 2025 Nguyen. All rights reserved.
- * This software is the confidential and proprietary information of Nguyen.
- */
-
 package com.example.paymentservice.exception;
 
-/**
- * PaymentFailedException.java
- *
- * @author Nguyen
- */
-public class PaymentFailedException {
+public class PaymentFailedException extends RuntimeException {
+
+    public PaymentFailedException(String message) {
+        super(message);
+    }
 }

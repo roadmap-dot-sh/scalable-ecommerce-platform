@@ -1,16 +1,21 @@
-/*
- * RefundRequest.java
- *
- * Copyright (c) 2025 Nguyen. All rights reserved.
- * This software is the confidential and proprietary information of Nguyen.
- */
-
 package com.example.paymentservice.dto.request;
 
-/**
- * RefundRequest.java
- *
- * @author Nguyen
- */
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.Data;
+
+import java.math.BigDecimal;
+
+@Data
 public class RefundRequest {
+
+    @NotBlank
+    private String paymentId;
+
+    @NotNull
+    @DecimalMin("0.01")
+    private BigDecimal amount;
+
+    private String reason;
 }

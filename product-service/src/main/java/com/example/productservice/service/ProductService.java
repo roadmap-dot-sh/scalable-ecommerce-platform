@@ -1,19 +1,15 @@
-/*
- * ProductService.java
- *
- * Copyright (c) 2025 Nguyen. All rights reserved.
- * This software is the confidential and proprietary information of Nguyen.
- */
-
 package com.example.productservice.service;
 
 import com.example.productservice.dto.request.CreateProductRequest;
 import com.example.productservice.dto.request.InventoryUpdateRequest;
 import com.example.productservice.dto.request.UpdateProductRequest;
+import com.example.productservice.dto.response.ProductDetailResponse;
 import com.example.productservice.dto.response.ProductResponse;
 import com.example.productservice.entity.Product;
+import com.example.productservice.entity.ProductVariant;
 import com.example.productservice.entity.Review;
 import com.example.productservice.event.ProductEventPublisher;
+import com.example.productservice.exception.ProductNotFoundException;
 import com.example.productservice.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,18 +21,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
-/**
- * ProductService.java
- *
- * @author Nguyen
- */
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class ProductService {
+
     private final ProductRepository productRepository;
     private final CategoryService categoryService;
     private final ProductEventPublisher eventPublisher;
@@ -45,9 +39,8 @@ public class ProductService {
     public ProductResponse createProduct(CreateProductRequest request) {
         log.info("Creating new product with SKU: {}", request.getSku());
 
-        // Check if SKU already exists
         if (productRepository.findBySku(request.getSku()).isPresent()) {
-            throw new RuntimeException("Product with SKU " + request.getSku() + " already exists");
+            throw new IllegalArgumentException("Product with SKU " + request.getSku() + " already exists");
         }
 
         Product product = Product.builder()
@@ -73,20 +66,21 @@ public class ProductService {
                 .seoKeywords(request.getSeoKeywords())
                 .availableDate(request.getAvailableDate())
                 .featured(request.isFeatured())
+                .quantity(request.getQuantity() != null ? request.getQuantity() : 0)
                 .build();
 
-        // Set category if provided
         if (request.getCategoryId() != null) {
             product.setCategory(categoryService.getCategoryEntity(request.getCategoryId()));
         }
 
-        // Set variants if provided
         if (request.getVariants() != null && !request.getVariants().isEmpty()) {
             List<ProductVariant> variants = request.getVariants().stream()
                     .map(variantRequest -> ProductVariant.builder()
+                            .id(UUID.randomUUID().toString())
                             .sku(variantRequest.getSku())
                             .name(variantRequest.getName())
-                            .attributes(variantRequest.getAttributes())
+                            .attributes(variantRequest.getAttributes() != null
+                                    ? variantRequest.getAttributes() : new HashMap<>())
                             .price(variantRequest.getPrice())
                             .compareAtPrice(variantRequest.getCompareAtPrice())
                             .quantity(variantRequest.getQuantity())
@@ -98,39 +92,54 @@ public class ProductService {
         }
 
         product = productRepository.save(product);
-
-        // Publish product created event
         eventPublisher.publishProductCreated(product);
-
         log.info("Product created successfully with id: {}", product.getId());
         return mapToResponse(product);
     }
 
     @Cacheable(value = "products", key = "#id")
     public ProductResponse getProduct(String id) {
-        log.info("Fetching product with id: {}", id);
-
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
-
+                .orElseThrow(() -> new ProductNotFoundException("Product not found with id: " + id));
         return mapToResponse(product);
     }
 
-    @Cacheable(value = "products", key = "#sku")
+    public ProductDetailResponse getProductDetail(String id) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ProductNotFoundException("Product not found with id: " + id));
+        return ProductDetailResponse.builder()
+                .id(product.getId())
+                .sku(product.getSku())
+                .name(product.getName())
+                .description(product.getDescription())
+                .shortDescription(product.getShortDescription())
+                .price(product.getPrice())
+                .compareAtPrice(product.getCompareAtPrice())
+                .images(product.getImages())
+                .thumbnail(product.getThumbnail())
+                .category(product.getCategory() != null ? categoryService.mapToResponse(product.getCategory()) : null)
+                .tags(product.getTags())
+                .brand(product.getBrand())
+                .reviews(product.getReviews())
+                .variants(product.getVariants())
+                .quantity(product.getQuantity())
+                .createdAt(product.getCreatedAt())
+                .updatedAt(product.getUpdatedAt())
+                .build();
+    }
+
+    @Cacheable(value = "products", key = "'sku:' + #sku")
     public ProductResponse getProductBySku(String sku) {
         Product product = productRepository.findBySku(sku)
-                .orElseThrow(() -> new RuntimeException("Product not found with SKU: " + sku));
-
+                .orElseThrow(() -> new ProductNotFoundException("Product not found with SKU: " + sku));
         return mapToResponse(product);
     }
 
     @Transactional
-    @CacheEvict(value = "products", key = "#id")
+    @CacheEvict(value = "products", allEntries = true)
     public ProductResponse updateProduct(String id, UpdateProductRequest request) {
-        log.info("Updating product with id: {}", id);
-
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
+                .orElseThrow(() -> new ProductNotFoundException("Product not found with id: " + id));
 
         if (request.getName() != null) {
             product.setName(request.getName());
@@ -162,54 +171,48 @@ public class ProductService {
         if (request.getBrand() != null) {
             product.setBrand(request.getBrand());
         }
-        if (request.isFeatured() != product.isFeatured()) {
-            product.setFeatured(request.isFeatured());
+        if (request.getFeatured() != null) {
+            product.setFeatured(request.getFeatured());
         }
-        if (request.isActive() != product.isActive()) {
-            product.setActive(request.isActive());
+        if (request.getActive() != null) {
+            product.setActive(request.getActive());
         }
 
         product = productRepository.save(product);
-
-        // Publish product updated event
         eventPublisher.publishProductUpdated(product);
-
         return mapToResponse(product);
     }
 
     @Transactional
+    @CacheEvict(value = "products", allEntries = true)
     public void updateInventory(String productId, InventoryUpdateRequest request) {
         Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+                .orElseThrow(() -> new ProductNotFoundException("Product not found"));
 
-        // Update main product quantity
         if (request.getQuantity() != null) {
             product.setQuantity(request.getQuantity());
         }
 
-        // Update variant inventory if specified
         if (request.getVariantId() != null && request.getVariantQuantity() != null) {
             product.getVariants().stream()
-                    .filter(variant -> variant.getId().equals(request.getVariantId()))
+                    .filter(variant -> request.getVariantId().equals(variant.getId()))
                     .findFirst()
                     .ifPresent(variant -> variant.setQuantity(request.getVariantQuantity()));
         }
 
         productRepository.save(product);
-
-        // Publish inventory updated event
         eventPublisher.publishInventoryUpdated(product, request);
     }
 
     @Transactional
+    @CacheEvict(value = "products", allEntries = true)
     public void addReview(String productId, Review review) {
         Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+                .orElseThrow(() -> new ProductNotFoundException("Product not found"));
 
-        review.setId(java.util.UUID.randomUUID().toString());
+        review.setId(UUID.randomUUID().toString());
         product.getReviews().add(review);
 
-        // Update average rating
         double totalRating = product.getReviews().stream()
                 .mapToInt(Review::getRating)
                 .sum();
@@ -220,18 +223,15 @@ public class ProductService {
     }
 
     public Page<ProductResponse> getAllProducts(Pageable pageable) {
-        return productRepository.findByActiveTrue(pageable)
-                .map(this::mapToResponse);
+        return productRepository.findByActiveTrue(pageable).map(this::mapToResponse);
     }
 
     public Page<ProductResponse> getProductsByCategory(String categoryId, Pageable pageable) {
-        return productRepository.findByCategoryIdAndActiveTrue(categoryId, pageable)
-                .map(this::mapToResponse);
+        return productRepository.findByCategory_IdAndActiveTrue(categoryId, pageable).map(this::mapToResponse);
     }
 
     public Page<ProductResponse> searchProducts(String keyword, Pageable pageable) {
-        return productRepository.searchByName(keyword, pageable)
-                .map(this::mapToResponse);
+        return productRepository.searchByName(keyword, pageable).map(this::mapToResponse);
     }
 
     public Page<ProductResponse> filterProducts(
@@ -242,22 +242,19 @@ public class ProductService {
             Pageable pageable) {
 
         if (minPrice != null && maxPrice != null) {
-            return productRepository.findByPriceRange(minPrice, maxPrice, pageable)
-                    .map(this::mapToResponse);
-        } else if (tags != null && !tags.isEmpty()) {
-            return productRepository.findByTags(tags, pageable)
-                    .map(this::mapToResponse);
-        } else if (brand != null) {
-            return productRepository.findByBrandAndActiveTrue(brand, pageable)
-                    .map(this::mapToResponse);
+            return productRepository.findByPriceRange(minPrice, maxPrice, pageable).map(this::mapToResponse);
         }
-
+        if (tags != null && !tags.isEmpty()) {
+            return productRepository.findByTags(tags, pageable).map(this::mapToResponse);
+        }
+        if (brand != null) {
+            return productRepository.findByBrandAndActiveTrue(brand, pageable).map(this::mapToResponse);
+        }
         return getAllProducts(pageable);
     }
 
     public List<ProductResponse> getFeaturedProducts() {
-        return productRepository.findByFeaturedTrueAndActiveTrue(Pageable.ofSize(10))
-                .stream()
+        return productRepository.findByFeaturedTrueAndActiveTrue(Pageable.ofSize(10)).stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
     }
@@ -273,8 +270,8 @@ public class ProductService {
                 .compareAtPrice(product.getCompareAtPrice())
                 .images(product.getImages())
                 .thumbnail(product.getThumbnail())
-                .category(product.getCategory() != null ?
-                        categoryService.mapToResponse(product.getCategory()) : null)
+                .category(product.getCategory() != null
+                        ? categoryService.mapToResponse(product.getCategory()) : null)
                 .tags(product.getTags())
                 .brand(product.getBrand())
                 .manufacturer(product.getManufacturer())
@@ -284,6 +281,7 @@ public class ProductService {
                 .active(product.isActive())
                 .featured(product.isFeatured())
                 .variants(product.getVariants())
+                .quantity(product.getQuantity())
                 .createdAt(product.getCreatedAt())
                 .updatedAt(product.getUpdatedAt())
                 .build();

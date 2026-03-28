@@ -1,16 +1,9 @@
-/*
- * OrderItemRepository.java
- *
- * Copyright (c) 2025 Nguyen. All rights reserved.
- * This software is the confidential and proprietary information of Nguyen.
- */
-
 package com.example.orderservice.repository;
 
-/**
- * OrderItemRepository.java
- *
- * @author Nguyen
- */
-public interface OrderItemRepository {
+import com.example.orderservice.entity.OrderItem;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface OrderItemRepository extends JpaRepository<OrderItem, String> {
 }

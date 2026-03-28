@@ -1,16 +1,13 @@
-/*
- * StripeWebhookHandler.java
- *
- * Copyright (c) 2025 Nguyen. All rights reserved.
- * This software is the confidential and proprietary information of Nguyen.
- */
-
 package com.example.paymentservice.webhook;
 
-/**
- * StripeWebhookHandler.java
- *
- * @author Nguyen
- */
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
+
+@Component
+@Slf4j
 public class StripeWebhookHandler {
+
+    public void onEvent(String payload) {
+        log.debug("Stripe webhook event received (length={})", payload != null ? payload.length() : 0);
+    }
 }
